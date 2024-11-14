@@ -5,6 +5,7 @@ class Server:
   def __init__(self):
         self.max_students = 8
         self.users = []
+        
 
 serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serv.bind(('0.0.0.0', 8080))
