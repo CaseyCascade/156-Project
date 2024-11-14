@@ -1,7 +1,11 @@
 import socket
+from user_profile import UserProfile
+
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+user_profile: UserProfile
 
 def register_user():
+    global user_profile
     username = "Default Name"
     is_instructor = False
 
@@ -22,9 +26,10 @@ def register_user():
     else:
         print("Welcome Student", username + "!")
 
+    user_profile = UserProfile(username, is_instructor)
 
 client.connect(('localhost', 8080))
-client.send("I am CLIENT\n".encode())
+client.send(user_profile.encode())
 from_server = client.recv(4096)
 client.close()
 print (from_server.decode())
