@@ -29,10 +29,12 @@ def register_user():
 
     user_profile = UserProfile(username, is_instructor)
 
+def run_client():
+    register_user()
+    client.connect(('localhost', 8080))
+    client.send(user_profile.get_profile_json().encode())
+    from_server = client.recv(4096)
+    client.close()
+    print (from_server.decode())
 
-register_user()
-client.connect(('localhost', 8080))
-client.send(user_profile.get_profile_json().encode())
-from_server = client.recv(4096)
-client.close()
-print (from_server.decode())
+run_client()
