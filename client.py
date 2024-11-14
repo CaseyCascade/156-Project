@@ -1,4 +1,5 @@
 import socket
+import json 
 from user_profile import UserProfile
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -28,8 +29,10 @@ def register_user():
 
     user_profile = UserProfile(username, is_instructor)
 
+
+register_user()
 client.connect(('localhost', 8080))
-client.send(user_profile.encode())
+client.send(user_profile.get_profile_json().encode())
 from_server = client.recv(4096)
 client.close()
 print (from_server.decode())

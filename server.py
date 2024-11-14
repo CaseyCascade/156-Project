@@ -1,4 +1,5 @@
 import socket
+import json 
 from user_profile import UserProfile
 
 class Server:
@@ -23,7 +24,11 @@ while True:
     data = conn.recv(4096)
     if not data: break
     from_client += data.decode('utf8')
-    print (f'From client: {from_client.username}')
+
+    # Deserialize json data # Chat GPT
+    decoded_json = json.loads(from_client)
+    print("Received dictionary:", decoded_json)
+
     conn.send("I am SERVER\n".encode())
   conn.close()
 print ('client disconnected and shutdown')
