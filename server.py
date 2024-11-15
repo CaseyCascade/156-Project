@@ -7,7 +7,12 @@ class Room:
     self.max_students = 8
     self.students = []
     self.instructor: UserProfile = None
-  
+
+  def get_all_users(self):
+    all_users = self.students 
+    all_users.append(self.instructor)
+    return all_users
+
   def add_user(self, user: UserProfile):
     if user.is_instructor:
       if self.instructor is None:
@@ -20,7 +25,14 @@ class Room:
       return [True, "Student " + user.username + " Added"]
     else:
       return [False, "Cannot add " + user.username + " as Student. The maximum # of Students has been reached"]
+    
+  
+  def broadcast_message(self, message_json):
+    for user in self.get_all_users():
+      if not user.has_socket():
+        continue 
 
+    pass
 def run_server():
   multicast = Room()
 
@@ -40,9 +52,13 @@ def run_server():
 
       # Create new user from JSON and add to the multicast 
       new_user = UserProfile()
-      multicast.add_user(new_user.init_from_json(decoded_json)) #TODO Test this 
-
-      conn.send("I am SERVER\n".encode())
+      new_user.init_from_json(decoded_json)
+      add_response = multicast.add_user(new_user)
+      
+      # If user is successfully added, add their socket to their User Profile 
+      if add_response[0] == True:
+        multicast[-1].set_socket(conn)
+        
     conn.close()
   print ('client disconnected and shutdown')
 
