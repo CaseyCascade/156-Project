@@ -5,6 +5,9 @@ class UserProfile:
         self.is_instructor = is_instructor if is_instructor is not None else None 
 
     def get_profile_json(self):
+        if self.username is None:
+            return 
+    
         data = {"username": self.username, "is_instructor": self.is_instructor}
         return json.dumps(data)
     
