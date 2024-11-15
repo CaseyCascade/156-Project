@@ -2,7 +2,7 @@ import socket
 import json 
 from user_profile import UserProfile
 
-class Server:
+class Room:
   def __init__(self):
     self.max_students = 8
     self.students = []
@@ -21,10 +21,9 @@ class Server:
     else:
       return [False, "Cannot add " + user.username + " as Student. The maximum # of Students has been reached"]
 
-
-     
-        
 def run_server():
+  multicast = Room()
+
   serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   serv.bind(('localhost', 8080))
   serv.listen(5)
@@ -38,7 +37,10 @@ def run_server():
 
       # Deserialize json data # Chat GPT
       decoded_json = json.loads(from_client)
-      print("Received dictionary:", decoded_json)
+
+      # Create new user from JSON and add to the multicast 
+      new_user = UserProfile()
+      multicast.add_user(new_user.init_from_json(decoded_json)) #TODO Test this 
 
       conn.send("I am SERVER\n".encode())
     conn.close()
