@@ -22,15 +22,34 @@ class UserProfile:
         else:
             return True 
         
-    def get_profile_json(self):
+    def get_profile_json(self)->dict:
         data = {"username": self.username, "is_instructor": self.is_instructor}
         return data
     
-    def get_request_json(self, request):
+    def get_full_request(self, request: str, data_json: dict = None)->str:
         if self.username is None:
             return
-        data = {"request": request, "username": self.username, "is_instructor": self.is_instructor}
-        return json.dumps(data)
+        request_json = {"request": request, "username": self.username, "is_instructor": self.is_instructor}
+        if data_json is None:
+            return json.dumps(request_json)
+        else:
+            combined_json = {**request_json, **data_json}
+            return json.dumps(combined_json)
+    
+    def parse_raw_request(self, raw_string)->str:
+        arguments = raw_string.split('|')
+        request_type = arguments[0]
+        
+        # Remove the first element using slicing
+        arguments = arguments[1:]
+
+        if not arguments:
+            return self.get_full_request(request_type)
+        elif request_type == "broadcast":
+            return self.get_full_request(request_type, {"message":','.join(arguments)})
+        elif request_type == "request_breakout":
+            return self.get_full_request(request_type, {"users": arguments})
+        
 
     
     

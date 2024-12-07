@@ -68,6 +68,28 @@ def handle_client_request(conn, multicast, decoded_json, temporary_students=None
       conn.send(json.dumps(response).encode('utf8'))
       print("Multicast room created successfully.")
 
+    elif request_type == "broadcast":
+      message = decoded_json.get("message", "")
+      if not message:
+          response = [False, "Message content is missing."]
+          conn.send(json.dumps(response).encode('utf8'))
+          return
+
+      # Broadcast the message to all users in the multicast room
+      success_count = 0
+      for user in multicast.get_all_users():
+          if user and user.has_socket():  # Ensure user has a valid socket
+              try:
+                  user.send_message(f"[Broadcast from {username}]: {message}")
+                  success_count += 1
+              except Exception as e:
+                  print(f"Error sending broadcast message to {user.username}: {e}")
+
+      response = [True, f"Message broadcasted to {success_count} users."]
+      conn.send(json.dumps(response).encode('utf8'))
+      print(f"Broadcast message from {username}: {message}")
+
+      
     elif request_type == "participants":
       all_user_json = []  
       for user in multicast.get_all_users():

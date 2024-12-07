@@ -6,7 +6,7 @@ class Room:
     self.max_students = 8
     self.students: List[UserProfile] = []
     self.instructor: UserProfile = None
-    self.breakout_rooms = List[Room] = []
+    self.breakout_rooms: List[Room] = []
     self.is_breakout = False
 
   def get_all_users(self):

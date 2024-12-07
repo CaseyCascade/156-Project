@@ -41,9 +41,6 @@ def register_user():
 
 
 def compose_request():
-    """
-    Prompts the user to enter a request type.
-    """
     while True:
         request = input("[>] Enter request type (e.g., 'create_room', 'exit'): ").strip()
         if request:
@@ -52,9 +49,7 @@ def compose_request():
 
 
 def run_client():
-    """
-    Main function to run the client. Handles server communication.
-    """
+
     register_user()
 
     try:
@@ -63,7 +58,7 @@ def run_client():
         print("Connected to Server!")
 
         # Send initial User Profile to Server
-        initial_request = user_profile.get_request_json("add_user")
+        initial_request = user_profile.get_full_request("add_user")
         client.send(initial_request.encode())
         from_server = client.recv(4096).decode()
         print("Server Response:", from_server)
@@ -80,7 +75,7 @@ def run_client():
 
             # Send the request to the server
             try:
-                client.send(user_profile.get_request_json(request).encode())
+                client.send(user_profile.parse_raw_request(request).encode())
                 from_server = client.recv(4096).decode()
                 print("Server Response:", from_server)
             except Exception as e:
