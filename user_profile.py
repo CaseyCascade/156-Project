@@ -50,9 +50,18 @@ class UserProfile:
         elif request_type == "request_breakout":
             return self.get_full_request(request_type, {"users": arguments})
         
+    def send_message(self, message: str) -> bool: 
+        if not self.socket:
+            print(f"User {self.username} does not have an active socket.")
+            return False
 
-    
-    
+        try:
+            self.socket.send(message.encode('utf8'))  # Send the message as UTF-8 encoded string
+            return True
+        except Exception as e:
+            print(f"Error sending message to {self.username}: {e}")
+            return False
+
     def print(self):
         print("Username:", self.username)
         print("Instructor:", self.is_instructor)

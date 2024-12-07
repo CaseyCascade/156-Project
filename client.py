@@ -1,5 +1,4 @@
 import socket
-import json
 from user_profile import UserProfile
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -7,9 +6,6 @@ user_profile: UserProfile
 
 
 def register_user():
-    """
-    Registers a user by asking for username and instructor status.
-    """
     global user_profile
     print("Welcome to the registration system!")
 
@@ -65,10 +61,8 @@ def run_client():
 
         # Enter a loop to send and receive requests
         while True:
-            # Get the request from the user
             request = compose_request()
 
-            # Handle exit request
             if request.lower() == "exit":
                 print("Exiting client...")
                 break

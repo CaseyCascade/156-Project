@@ -7,15 +7,6 @@ from typing import List
 
 
 def handle_client_request(conn, multicast, decoded_json, temporary_students=None):
-    """
-    Handles a client's request and sends a response back to the client.
-
-    Parameters:
-    - conn: The socket connection to the client.
-    - decoded_json: The JSON object received from the client.
-    - multicast: The Room object managing the multicast group.
-    - temporary_students: A list to temporarily store students before the multicast room is created.
-    """
     request_type = decoded_json.get("request", "unknown")  # "request" specifies the type
     username = decoded_json.get("username")
     is_instructor = decoded_json.get("is_instructor", False)  # Default to False if not provided
@@ -68,7 +59,7 @@ def handle_client_request(conn, multicast, decoded_json, temporary_students=None
       conn.send(json.dumps(response).encode('utf8'))
       print("Multicast room created successfully.")
 
-    elif request_type == "broadcast":
+    elif request_type == "broadcast": #FIXME Instructor receives message from self. Instructor is not receiving message from student. Student is not receiving messages 
       message = decoded_json.get("message", "")
       if not message:
           response = [False, "Message content is missing."]
@@ -80,7 +71,7 @@ def handle_client_request(conn, multicast, decoded_json, temporary_students=None
       for user in multicast.get_all_users():
           if user and user.has_socket():  # Ensure user has a valid socket
               try:
-                  user.send_message(f"[Broadcast from {username}]: {message}")
+                  user.send_message(f"[Broadcast from {username}]: {message}") 
                   success_count += 1
               except Exception as e:
                   print(f"Error sending broadcast message to {user.username}: {e}")
