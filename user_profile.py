@@ -9,7 +9,10 @@ class UserProfile:
         self.username = decoded_json["username"] if self.username is None else self.username
         self.is_instructor = decoded_json["is_instructor"] if self.is_instructor is None else self.is_instructor
         return 
-
+    
+    def get_is_instructor(self):
+        return self.is_instructor
+    
     def set_socket(self, socket):
         self.socket = socket 
 
@@ -18,17 +21,15 @@ class UserProfile:
             return False
         else:
             return True 
-    
+        
     def get_profile_json(self):
-        if self.username is None:
-            return 
         data = {"username": self.username, "is_instructor": self.is_instructor}
-        return json.dumps(data)
+        return data
     
     def get_request_json(self, request):
         if self.username is None:
             return
-        data = {"username": self.username, "request": request}
+        data = {"request": request, "username": self.username, "is_instructor": self.is_instructor}
         return json.dumps(data)
 
     
