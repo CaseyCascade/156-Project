@@ -81,7 +81,7 @@ def handle_client_request(conn, multicast, decoded_json, temporary_students=None
       print(f"Broadcast message from {username}: {message}")
 
       
-    elif request_type == "participants":
+    elif request_type == "participants": # Prints a list of all users in the multicast
       all_user_json = []  
       for user in multicast.get_all_users():
         if user:      
@@ -98,9 +98,6 @@ def handle_client_request(conn, multicast, decoded_json, temporary_students=None
 
 
 def client_handler(conn, addr, multicast, temporary_students):
-    """
-    Handles a single client connection.
-    """
     print(f"Handling connection from {addr}")
     from_client = ''
     
