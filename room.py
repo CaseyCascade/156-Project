@@ -55,8 +55,9 @@ class Room:
 
     # Add all students in our list to the new breakout and remove them from multicast
     for student in students:
-      new_breakout.add_user(student)
+      print(new_breakout.add_user(student)[1])
       self.remove_user(student)
+    
     
     # Add breakout room to our list 
     self.breakout_rooms.append(new_breakout)

@@ -91,13 +91,10 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
             breakout_students.append(multicast.find_user(user))
 
         multicast.create_breakout(breakout_students)
-        
-        #FIXME Debug Messages below for current problem: Breakout Rooms are not being created 
-        print("Breakout Rooms:\n") 
-        for i, breakout in enumerate(multicast.breakout_rooms):
-            print("Room: " + str(i))
 
-        message = "The Following Students were added to a breakout room: " + str(breakout_students)
+        message = "The Following Students were added to a breakout room: "
+        for student in breakout_students:
+            message += student.username + ", "
         conn.send(message.encode('utf8'))
         
     elif request_type == "show": # Prints a list of all users in all rooms
