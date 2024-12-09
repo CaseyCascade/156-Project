@@ -44,7 +44,7 @@ class Room:
         break 
       
   
-  def create_breakout(self, students:List[UserProfile]): #FIXME students are not being added 
+  def create_breakout(self, students:List[UserProfile]): 
     if self.is_breakout: #Only the multicast can have sub-rooms
       return 
     
