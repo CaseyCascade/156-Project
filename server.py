@@ -83,8 +83,8 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
         flattened_string:str = ''.join(decoded_json.get("data"))
         index = int(flattened_string)
         request = instructor.get_request(index-1)
-        conn.send(json.dumps(request).encode('utf8'))
-        
+        conn.send(json.dumps(request).encode('utf8')) # For Debug purposes
+        #TODO Code to create breakout room
         
     elif request_type == "participants": # Prints a list of all users in the multicast
       all_user_json = []  
