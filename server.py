@@ -83,17 +83,38 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
         flattened_string:str = ''.join(decoded_json.get("data"))
         index = int(flattened_string)
         request = instructor.get_request(index-1)
-        conn.send(json.dumps(request).encode('utf8')) # For Debug purposes
-        #TODO Code to create breakout room
-        
-    elif request_type == "participants": # Prints a list of all users in the multicast
-      all_user_json = []  
-      for user in multicast.get_all_users():
-        if user:      
-          all_user_json.append(user.get_profile_json())
 
-      # Send the entire list of user JSON data as a single JSON message
-      conn.send(json.dumps(all_user_json).encode('utf8'))
+        # Add students to a list for breakout room 
+        breakout_students = []
+        breakout_students.append(multicast.find_user(request["username"]))
+        for user in request["users"]:
+            breakout_students.append(multicast.find_user(user))
+
+        multicast.create_breakout(breakout_students)
+        
+        #FIXME Debug Messages below for current problem: Breakout Rooms are not being created 
+        print("Breakout Rooms:\n") 
+        for i, breakout in enumerate(multicast.breakout_rooms):
+            print("Room: " + str(i))
+
+        message = "The Following Students were added to a breakout room: " + str(breakout_students)
+        conn.send(message.encode('utf8'))
+        
+    elif request_type == "show": # Prints a list of all users in all rooms
+        waiting_message = "\nWaiting List:\n"
+        for user in temporary_students:
+            waiting_message += json.dumps(user.get_profile_json()) + "\n"
+          
+        multicast_message = "\nMulticast Room:\n"
+        for user in multicast.get_all_users():      
+            multicast_message += json.dumps(user.get_profile_json()) + "\n"
+            breakout_message = ""
+            for index, breakout in enumerate(multicast.breakout_rooms):
+                breakout_message += f"Breakout {index}:\n"
+                for user in breakout.get_all_users():
+                    breakout_message += user.username + "\n"
+        combined_message = waiting_message + multicast_message + breakout_message
+        conn.send(combined_message.encode('utf8'))
 
     else:
         # Handle unknown request types

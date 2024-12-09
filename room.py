@@ -18,7 +18,6 @@ class Room:
   def get_instructor(self):
     return self.instructor
 
-
   def add_user(self, user: UserProfile):
     if user.is_instructor:
       if self.instructor is None:
@@ -33,16 +32,37 @@ class Room:
       return [False, "Cannot add " + user.username + " as Student. The maximum # of Students has been reached"]
     
   def find_user(self, name):
-    #print(f"Searching for user: {name}")
     for user in self.get_all_users():
         if user and user.username == name:  # Check for None
-            #print(f"User found: {user.username}")
             return user
-    #print(f"User '{name}' not found.")
     return None
-
+  
+  def remove_user(self, user:UserProfile):
+    for i in self.get_all_users():
+      if user == i and not user.is_instructor:
+        self.students.remove(i)
+        break 
+      
+  
+  def create_breakout(self, students:List[UserProfile]): #FIXME students are not being added 
+    if self.is_breakout: #Only the multicast can have sub-rooms
+      return 
     
-  def broadcast_message(self, message_json):
-    for user in self.get_all_users():
-      if not user.has_socket():
-        continue 
+    # Initialize our Breakout Room 
+    new_breakout = Room()
+    new_breakout.add_user(self.instructor)
+    new_breakout.is_breakout = True
+
+    # Add all students in our list to the new breakout and remove them from multicast
+    for student in students:
+      new_breakout.add_user(student)
+      self.remove_user(student)
+    
+    # Add breakout room to our list 
+    self.breakout_rooms.append(new_breakout)
+    
+  def delete_breakout(self, index):
+    breakout = self.breakout_rooms[index]
+    for student in breakout.students:
+      self.add_user(student)
+    self.breakout_rooms.remove(breakout)
