@@ -69,10 +69,6 @@ class UserProfile:
         del self.breakout_requests[request_index]
         return request
 
-
-
-
-
     def print(self):
         print("Username:", self.username)
         print("Instructor:", self.is_instructor)

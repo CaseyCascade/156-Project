@@ -4,7 +4,6 @@ from user_profile import UserProfile
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 user_profile: UserProfile
 
-
 def register_user():
     global user_profile
     print("Welcome to the registration system!")
@@ -35,7 +34,6 @@ def register_user():
         print(f"Welcome Student {username}!")
     user_profile = UserProfile(username, is_instructor)
 
-
 def compose_request():
     while True:
         request = input("[>] Enter request type (e.g., 'create_room', 'exit'): ").strip()
@@ -43,9 +41,7 @@ def compose_request():
             return request
         print("Request cannot be empty. Please try again.")
 
-
 def run_client():
-
     register_user()
 
     try:
