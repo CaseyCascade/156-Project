@@ -133,9 +133,12 @@ def run_server():
     temporary_students: List[UserProfile] = []  # Temporary list for collecting students
 
     serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    serv.bind(('localhost', 8080))
+    hostname = socket.gethostname() #ADDED
+    ip_address = socket.gethostbyname(hostname) #ADDED
+    #serv.bind(('localhost', 8080)) #changing...
+    serv.bind((ip_address, 8080))
     serv.listen(5)
-    print("Server started, listening on port 8080...")
+    print(f"Server started on IP: {ip_address}, listening on port 8080...")
 
     while True:
         conn, addr = serv.accept()

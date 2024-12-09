@@ -50,8 +50,13 @@ def run_client():
 
     try:
         # Connect to Server
-        client.connect(('localhost', 8080))
-        print("Connected to Server!")
+        try:
+            request = input("[>] Enter IP you want to connect to: ").strip() #ADDED
+            client.connect((request, 8080)) #ADDED 
+            #client.connect(('localhost', 8080)) #changing
+            print(f"Connected to {request}")
+        except ConnectionRefused:
+            print("Connection failed")
 
         # Send initial User Profile to Server
         initial_request = user_profile.get_full_request("add_user")
