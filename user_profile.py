@@ -1,8 +1,10 @@
 import json
+from typing import List 
 class UserProfile:
     def __init__(self, username=None, is_instructor=None, socket=None):
         self.username = username if username is not None else None
         self.is_instructor = is_instructor if is_instructor is not None else None 
+        self.breakout_requests: List[dict] = []
         self.socket = None 
 
     def init_from_json(self, decoded_json): # Only works if UserProfile was not initialized with any args 
@@ -22,6 +24,9 @@ class UserProfile:
         else:
             return True 
         
+    def add_breakout_request(self, request: dict):
+        self.breakout_requests.append(request)
+
     def get_profile_json(self)->dict:
         data = {"username": self.username, "is_instructor": self.is_instructor}
         return data
@@ -49,18 +54,24 @@ class UserProfile:
             return self.get_full_request(request_type, {"message":','.join(arguments)})
         elif request_type == "request_breakout":
             return self.get_full_request(request_type, {"users": arguments})
+        else:
+            return self.get_full_request(request_type, {'data': arguments})
         
-    def send_message(self, message: str) -> bool: 
-        if not self.socket:
-            print(f"User {self.username} does not have an active socket.")
-            return False
+    def display_requests(self):
+        message_to_instructor = "Requests:\n"
+        for i, item in enumerate(self.breakout_requests):
+            message_to_instructor += f"{i + 1}. {item['users']}\n"
+        print("Displaying Requests for Instructor on client side")
+        return message_to_instructor
 
-        try:
-            self.socket.send(message.encode('utf8'))  # Send the message as UTF-8 encoded string
-            return True
-        except Exception as e:
-            print(f"Error sending message to {self.username}: {e}")
-            return False
+    def get_request(self, request_index):
+        request = self.breakout_requests[request_index]
+        del self.breakout_requests[request_index]
+        return request
+
+
+
+
 
     def print(self):
         print("Username:", self.username)
