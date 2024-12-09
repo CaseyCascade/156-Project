@@ -5,11 +5,26 @@ from user_profile import UserProfile
 from room import Room 
 from typing import List 
 
+def validate_instructor(multicast:Room, decoded_json:dict):
+    username = decoded_json.get("username")
+    instructor = multicast.find_user(username)
 
-def handle_client_request(conn, multicast, decoded_json, temporary_students=None):
+    if not instructor:
+        response = [False, f"User '{username}' not found."]
+        return False
+
+    if not instructor.is_instructor:
+        response = [False, f"User '{username}' is not an instructor."]
+        return False
+    
+    return instructor
+
+def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_students=None):
     request_type = decoded_json.get("request", "unknown")  # "request" specifies the type
     username = decoded_json.get("username")
-    is_instructor = decoded_json.get("is_instructor", False)  # Default to False if not provided
+    is_instructor = decoded_json.get("is_instructor", False)  # Default to False if not provide
+
+    instructor = validate_instructor(multicast, decoded_json)
 
     if not username:
         conn.send(json.dumps([False, "Missing 'username' field"]).encode('utf8'))
@@ -37,50 +52,40 @@ def handle_client_request(conn, multicast, decoded_json, temporary_students=None
             print(f"Response to add_user (student): {response}")
 
     elif request_type == "create_room":
-      username = decoded_json.get("username")
-      instructor = multicast.find_user(username)
+        if not instructor:
+            return
 
-      if not instructor:
-          response = [False, f"User '{username}' not found."]
-          conn.send(json.dumps(response).encode('utf8'))
-          print(response)
-          return
-
-      if not instructor.is_instructor:
-          response = [False, f"User '{username}' is not an instructor."]
-          conn.send(json.dumps(response).encode('utf8'))
-          print(response)
-          return
-
-      for student in temporary_students:
+        for student in temporary_students:
           multicast.add_user(student)
-      temporary_students.clear()
-      response = [True, "Multicast room created successfully."]
-      conn.send(json.dumps(response).encode('utf8'))
-      print("Multicast room created successfully.")
+        temporary_students.clear()
+        response = [True, "Multicast room created successfully."]
+        conn.send(json.dumps(response).encode('utf8'))
+        print("Multicast room created successfully.")
 
-    elif request_type == "broadcast": #FIXME Instructor receives message from self. Instructor is not receiving message from student. Student is not receiving messages 
-      message = decoded_json.get("message", "")
-      if not message:
-          response = [False, "Message content is missing."]
-          conn.send(json.dumps(response).encode('utf8'))
-          return
+    elif request_type == "message": #TODO
+        pass 
 
-      # Broadcast the message to all users in the multicast room
-      success_count = 0
-      for user in multicast.get_all_users():
-          if user and user.has_socket():  # Ensure user has a valid socket
-              try:
-                  user.send_message(f"[Broadcast from {username}]: {message}") 
-                  success_count += 1
-              except Exception as e:
-                  print(f"Error sending broadcast message to {user.username}: {e}")
+    elif request_type == "broadcast": #TODO message all users in the room. This can use the same code as the message request above 
+        pass 
 
-      response = [True, f"Message broadcasted to {success_count} users."]
-      conn.send(json.dumps(response).encode('utf8'))
-      print(f"Broadcast message from {username}: {message}")
+    elif request_type == "request_breakout":
+        multicast.get_instructor().add_breakout_request(decoded_json)
+    
+    elif request_type == "show_requests":
+        if not instructor:
+            return
+        conn.send(instructor.display_requests().encode('utf8'))
 
-      
+    elif request_type == "execute_request":
+        instructor = validate_instructor(multicast, decoded_json)
+        if not instructor:
+            return
+        flattened_string:str = ''.join(decoded_json.get("data"))
+        index = int(flattened_string)
+        request = instructor.get_request(index-1)
+        conn.send(json.dumps(request).encode('utf8'))
+        
+        
     elif request_type == "participants": # Prints a list of all users in the multicast
       all_user_json = []  
       for user in multicast.get_all_users():

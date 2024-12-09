@@ -14,6 +14,9 @@ class Room:
     if self.instructor:  # Only add the instructor if it's not None
         all_users.append(self.instructor)
     return all_users
+  
+  def get_instructor(self):
+    return self.instructor
 
 
   def add_user(self, user: UserProfile):
@@ -30,12 +33,12 @@ class Room:
       return [False, "Cannot add " + user.username + " as Student. The maximum # of Students has been reached"]
     
   def find_user(self, name):
-    print(f"Searching for user: {name}")
+    #print(f"Searching for user: {name}")
     for user in self.get_all_users():
         if user and user.username == name:  # Check for None
-            print(f"User found: {user.username}")
+            #print(f"User found: {user.username}")
             return user
-    print(f"User '{name}' not found.")
+    #print(f"User '{name}' not found.")
     return None
 
     
