@@ -51,10 +51,9 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
             conn.send(json.dumps(response).encode('utf8'))
             print(f"Response to add_user (student): {response}")
 
-    elif request_type == "create_room":
+    elif request_type == "create_room": # Adds all students in waiting list to the multicast
         if not instructor:
             return
-
         for student in temporary_students:
           multicast.add_user(student)
         temporary_students.clear()
@@ -68,7 +67,7 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
     elif request_type == "broadcast": #TODO message all users in the room. This can use the same code as the message request above 
         pass 
 
-    elif request_type == "request_breakout":
+    elif request_type == "request": # Request a breakout room ARGS: username of each other student
         multicast.get_instructor().add_breakout_request(decoded_json)
     
     elif request_type == "show_requests":
@@ -76,7 +75,7 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
             return
         conn.send(instructor.display_requests().encode('utf8'))
 
-    elif request_type == "execute_request":
+    elif request_type == "accept": # Accept a breakout room ARGS: index of request in list 
         instructor = validate_instructor(multicast, decoded_json)
         if not instructor:
             return
