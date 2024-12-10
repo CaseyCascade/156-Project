@@ -69,6 +69,8 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
 
     elif request_type == "request": # Request a breakout room ARGS: username of each other student
         multicast.get_instructor().add_breakout_request(decoded_json)
+        response = [True, f"Request for breakout room sent."]
+        conn.send(json.dumps(response).encode('utf8'))  # Send success response
     
     elif request_type == "show_requests":
         if not instructor:
@@ -99,7 +101,9 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
     elif request_type == "close": # Close a breakout room ARGS: index of active breakout rooms in "show"
         flattened_string:str = ''.join(decoded_json.get("data"))
         index = int(flattened_string)
-        multicast.delete_breakout(index-1) #FIXME This does as intended, but it traps our user input somehow 
+        multicast.delete_breakout(index-1) 
+        response = [True, f"Breakout room {index} closed successfully."]
+        conn.send(json.dumps(response).encode('utf8'))  # Send success response
         
     elif request_type == "show": # Prints a list of all users in all rooms
         waiting_message = "\nWaiting List:\n"
