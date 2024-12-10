@@ -78,7 +78,6 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
         conn.send(instructor.display_requests().encode('utf8'))
 
     elif request_type == "accept": # Accept a breakout room ARGS: index of request in list 
-        #instructor = validate_instructor(multicast, decoded_json)
         if not instructor:
             return
         flattened_string:str = ''.join(decoded_json.get("data"))
@@ -137,9 +136,8 @@ def client_handler(conn, addr, multicast, temporary_students):
             data = conn.recv(4096)
             if not data:
                 break  # Break if the client closes the connection
-            
+        
             from_client += data.decode('utf8')
-
             # Deserialize the JSON data
             try:
                 decoded_json = json.loads(from_client)

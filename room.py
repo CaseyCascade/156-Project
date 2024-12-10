@@ -63,6 +63,8 @@ class Room:
     self.breakout_rooms.append(new_breakout)
     
   def delete_breakout(self, index):
+    if len(self.breakout_rooms) == 0:
+      return 
     breakout = self.breakout_rooms[index]
     for student in breakout.students:
       self.add_user(student)
