@@ -57,14 +57,24 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
             return
         for student in temporary_students:
           multicast.add_user(student)
-          
+
         temporary_students.clear()
         response = [True, "Multicast room created successfully."]
         conn.send(json.dumps(response).encode('utf8'))
         print("Multicast room created successfully.")
 
     elif request_type == "message": #TODO send message to one specified user 
-        multicast.send_message(multicast.find_user(decoded_json["username"]), decoded_json["data"][0], decoded_json["data"][1])
+        sender = multicast.find_user(username)
+        recipient_username = decoded_json["data"][0]
+        message = decoded_json["data"][1]
+        sender_room = multicast.get_room_of_user(username)
+        recipient_room = multicast.get_room_of_user(recipient_username)
+    
+        if instructor: # If the sender is the instructor, find the recipient regardless of what room they're in 
+            recipient_room.send_message(sender, recipient_username, message)
+        else: # If the sender is a student, send a message only to someone in the same room 
+            sender_room.send_message(sender, recipient_username, message)
+            
 
     elif request_type == "broadcast": #TODO message all users in the room. This can use the same code as the message request above 
         pass 

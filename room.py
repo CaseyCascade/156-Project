@@ -70,6 +70,15 @@ class Room:
       self.add_user(student)
     self.breakout_rooms.remove(breakout)
 
+  def get_room_of_user(self, username):
+     if self.find_user(username):
+        return self
+     else:
+        for breakout in self.breakout_rooms:
+          if breakout.find_user(username):
+            return breakout
+        print("User not found in any Rooms")
+
   def send_message(self, sender, recipient_username, message):
     # Normalize username
     recipient_username = recipient_username.strip().lower()
