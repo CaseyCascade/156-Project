@@ -160,11 +160,17 @@ def client_handler(conn, addr, multicast, temporary_students):
 def run_server():
     multicast = Room()
     temporary_students: List[UserProfile] = []  # Temporary list for collecting students
-
+    
     serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    serv.bind(('localhost', 8080))
+    hostname = socket.gethostname() #ADDED
+    ip_address = socket.gethostbyname(hostname)
+
+    # Swap these two lines to do cross-machine instead of local host
+    serv.bind(('localhost', 8080)) 
+    #serv.bind((ip_address, 8080))
+    
     serv.listen(5)
-    print("Server started, listening on port 8080...")
+    print(f"Server started on IP: {ip_address}, listening on port 8080...")
 
     while True:
         conn, addr = serv.accept()

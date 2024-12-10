@@ -59,7 +59,12 @@ def run_client():
 
     try:
         # Connect to Server
-        client.connect(('localhost', 8080))
+        
+        # Swap these 3 lines to do cross-machine instead of localhost
+        # request = input("[>] Enter IP you want to connect to: ").strip()
+        #client.connect((request, 8080))
+        client.connect(("localhost", 8080))
+
         print("Connected to Server!")
 
         # Send initial User Profile to Server
