@@ -10,11 +10,11 @@ def validate_instructor(multicast:Room, decoded_json:dict):
     instructor = multicast.find_user(username)
 
     if not instructor:
-        response = [False, f"User '{username}' not found."]
+        #response = [False, f"User '{username}' not found."]
         return False
 
     if not instructor.is_instructor:
-        response = [False, f"User '{username}' is not an instructor."]
+        #response = [False, f"User '{username}' is not an instructor."]
         return False
     
     return instructor
@@ -86,7 +86,7 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
         # Add students to a list for breakout room 
         breakout_students = []
         breakout_students.append(multicast.find_user(request["username"]))
-        for user in request["users"]:
+        for user in request["data"]:
             breakout_students.append(multicast.find_user(user))
 
         multicast.create_breakout(breakout_students)
@@ -95,6 +95,11 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
         for student in breakout_students:
             message += student.username + ", "
         conn.send(message.encode('utf8'))
+    
+    elif request_type == "close": # Close a breakout room ARGS: index of active breakout rooms in "show"
+        flattened_string:str = ''.join(decoded_json.get("data"))
+        index = int(flattened_string)
+        multicast.delete_breakout(index-1) #FIXME This does as intended, but it traps our user input somehow 
         
     elif request_type == "show": # Prints a list of all users in all rooms
         waiting_message = "\nWaiting List:\n"
@@ -163,8 +168,8 @@ def run_server():
         conn, addr = serv.accept()
         print(f"Connection established with {addr}")
 
-        # Create a new thread for each client
-        client_thread = threading.Thread(
+        # Create a new thread for each client # Chat GPT helped with these lines 
+        client_thread = threading.Thread( 
             target=client_handler,
             args=(conn, addr, multicast, temporary_students)
         )

@@ -24,7 +24,8 @@ class UserProfile:
         else:
             return True 
         
-    def add_breakout_request(self, request: dict):
+    def add_breakout_request(self, request):
+        print(request)
         self.breakout_requests.append(request)
 
     def get_profile_json(self)->dict:
@@ -41,26 +42,29 @@ class UserProfile:
             combined_json = {**request_json, **data_json}
             return json.dumps(combined_json)
     
-    def parse_raw_request(self, raw_string)->str:
-        arguments = raw_string.split('|')
-        request_type = arguments[0]
-        
-        # Remove the first element using slicing
-        arguments = arguments[1:]
+    def parse_raw_request(self, raw_request):
+        try:
+            parts = raw_request.split("|")
+            request_type = parts[0]
+            data = parts[1:]  # Remaining parts are additional data
+            
+            # Formulate a JSON object based on the request
+            request_dict = {
+                "request": request_type,
+                "username": self.username,
+                "is_instructor": self.is_instructor,
+                "data": data
+            }
+            return json.dumps(request_dict)  # Return JSON as a string
+        except Exception as e:
+            print(f"Error parsing raw request: {e}")
+            return None
 
-        if not arguments:
-            return self.get_full_request(request_type)
-        elif request_type == "broadcast":
-            return self.get_full_request(request_type, {"message":','.join(arguments)})
-        elif request_type == "request_breakout":
-            return self.get_full_request(request_type, {"users": arguments})
-        else:
-            return self.get_full_request(request_type, {'data': arguments})
         
     def display_requests(self):
         message_to_instructor = "Requests:\n"
         for i, item in enumerate(self.breakout_requests):
-            message_to_instructor += f"{i + 1}. {item['users']}\n"
+            message_to_instructor += f"{i + 1}. {item['data']}\n"
         print("Displaying Requests for Instructor on client side")
         return message_to_instructor
 

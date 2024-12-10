@@ -6,8 +6,6 @@ user_profile: UserProfile
 
 def register_user():
     global user_profile
-    print("Welcome to the registration system!")
-
     # Ask for Username
     while True:
         username = input("Enter a Username: ").strip()
@@ -58,7 +56,6 @@ def run_client():
         # Enter a loop to send and receive requests
         while True:
             request = compose_request()
-
             if request.lower() == "exit":
                 print("Exiting client...")
                 break
