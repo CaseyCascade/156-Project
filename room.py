@@ -79,7 +79,7 @@ class Room:
             return breakout
         print("User not found in any Rooms")
 
-  def send_message(self, sender, recipient_username, message):
+  def send_message(self, sender_username, recipient_username, message):
     # Normalize username
     recipient_username = recipient_username.strip().lower()
 
@@ -97,7 +97,7 @@ class Room:
     try:
         # Send message
         recipient_socket = recipient_profile.get_socket()
-        recipient_socket.send(f"Message from {sender.get_username()}: {message}".encode('utf-8'))
+        recipient_socket.send(f"Message from {sender_username}: {message}".encode('utf-8'))
         print(f"Message sent to {recipient_username}: {message}")
     except Exception as e:
         print(f"Error sending message to {recipient_username}: {e}")
