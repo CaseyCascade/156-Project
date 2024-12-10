@@ -45,6 +45,7 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
             conn.send(json.dumps(add_response).encode('utf8'))
             print(f"Response to add_user (instructor): {add_response}")
         else:
+            new_user.set_socket(conn)
             # Add student to the temporary list
             temporary_students.append(new_user)
             response = [True, f"Student {new_user.username} added to the waiting list"]
@@ -55,7 +56,6 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
         if not instructor:
             return
         for student in temporary_students:
-          student.set_socket(conn)
           multicast.add_user(student)
           
         temporary_students.clear()
