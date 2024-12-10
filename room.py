@@ -70,7 +70,15 @@ class Room:
       self.add_user(student)
     self.breakout_rooms.remove(breakout)
 
-  def send_message(sender:UserProfile, recipient:UserProfile, message:str): #TODO
+  def send_message(self, sender:UserProfile, recipient:UserProfile, message:str): #TODO
+    if recipient.has_socket():
+      print(f"Recipient {recipient.get_username()} has a valid socket.")
+    else:
+      print(f"Recipient {recipient.get_username()} does not have a valid socket: ")
+
+    print("Sender: " + sender.get_username())
+    print("Receiver: " + recipient.get_username())
+    print("Message: " + message)
     if recipient.has_socket():
       try:
           recipient.get_socket().send(f"Message from {sender.get_username()}: {message}".encode('utf-8'))

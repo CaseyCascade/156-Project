@@ -7,6 +7,7 @@ user_profile: UserProfile
 
 def register_user():
     global user_profile
+    global client 
     # Ask for Username
     while True:
         username = input("Enter a Username: ").strip()
@@ -31,7 +32,7 @@ def register_user():
         print(f"Welcome Instructor {username}!")
     else:
         print(f"Welcome Student {username}!")
-    user_profile = UserProfile(username, is_instructor)
+    user_profile = UserProfile(username, is_instructor, client)
 
 def compose_request():
     while True:
