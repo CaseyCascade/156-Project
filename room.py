@@ -70,19 +70,25 @@ class Room:
       self.add_user(student)
     self.breakout_rooms.remove(breakout)
 
-  def send_message(self, sender:UserProfile, recipient:UserProfile, message:str): #TODO
-    if recipient.has_socket():
-      print(f"Recipient {recipient.get_username()} has a valid socket.")
-    else:
-      print(f"Recipient {recipient.get_username()} does not have a valid socket: ")
+  def send_message(self, sender, recipient_username, message):
+    # Normalize username
+    recipient_username = recipient_username.strip().lower()
 
-    print("Sender: " + sender.get_username())
-    print("Receiver: " + recipient.get_username())
-    print("Message: " + message)
-    if recipient.has_socket():
-      try:
-          recipient.get_socket().send(f"Message from {sender.get_username()}: {message}".encode('utf-8'))
-      except Exception as e:
-              print(f"Error sending message to {recipient}: {e}")
-      else:
-          print(f"Client {recipient} not found.")
+    # Look up recipient
+    recipient_profile = self.find_user(recipient_username)
+    if recipient_profile is None:
+        print(f"Client {recipient_username} not found.")
+        return
+
+    # Ensure recipient has a valid socket
+    if not recipient_profile.has_socket():
+        print(f"Recipient {recipient_username} does not have a valid socket.")
+        return
+
+    try:
+        # Send message
+        recipient_socket = recipient_profile.get_socket()
+        recipient_socket.send(f"Message from {sender.get_username()}: {message}".encode('utf-8'))
+        print(f"Message sent to {recipient_username}: {message}")
+    except Exception as e:
+        print(f"Error sending message to {recipient_username}: {e}")

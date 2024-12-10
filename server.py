@@ -55,14 +55,16 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
         if not instructor:
             return
         for student in temporary_students:
+          student.set_socket(conn)
           multicast.add_user(student)
+          
         temporary_students.clear()
         response = [True, "Multicast room created successfully."]
         conn.send(json.dumps(response).encode('utf8'))
         print("Multicast room created successfully.")
 
     elif request_type == "message": #TODO send message to one specified user 
-        multicast.send_message(multicast.find_user(decoded_json["username"]), multicast.find_user(decoded_json["data"][0]), decoded_json["data"][1])
+        multicast.send_message(multicast.find_user(decoded_json["username"]), decoded_json["data"][0], decoded_json["data"][1])
 
     elif request_type == "broadcast": #TODO message all users in the room. This can use the same code as the message request above 
         pass 
@@ -168,7 +170,7 @@ def run_server():
     # Swap these two lines to do cross-machine instead of local host
     serv.bind(('localhost', 8080)) 
     #serv.bind((ip_address, 8080))
-    
+
     serv.listen(5)
     print(f"Server started on IP: {ip_address}, listening on port 8080...")
 

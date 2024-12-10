@@ -7,7 +7,6 @@ user_profile: UserProfile
 
 def register_user():
     global user_profile
-    global client 
     # Ask for Username
     while True:
         username = input("Enter a Username: ").strip()
@@ -32,7 +31,7 @@ def register_user():
         print(f"Welcome Instructor {username}!")
     else:
         print(f"Welcome Student {username}!")
-    user_profile = UserProfile(username, is_instructor, client)
+    user_profile = UserProfile(username, is_instructor)
 
 def compose_request():
     while True:
@@ -59,7 +58,7 @@ def run_client():
 
     try:
         # Connect to Server
-        
+
         # Swap these 3 lines to do cross-machine instead of localhost
         # request = input("[>] Enter IP you want to connect to: ").strip()
         #client.connect((request, 8080))

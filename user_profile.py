@@ -1,10 +1,10 @@
 import json
 from typing import List 
 class UserProfile:
-    def __init__(self, username=None, is_instructor=None, socket=None):
+    def __init__(self, username=None, is_instructor=None):
         self.username = username if username is not None else None
         self.is_instructor = is_instructor if is_instructor is not None else None 
-        self.socket = socket if socket is not None else None
+        self.socket = None
         self.breakout_requests: List[dict] = []
         
 
