@@ -62,7 +62,7 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
         print("Multicast room created successfully.")
 
     elif request_type == "message": #TODO send message to one specified user 
-        pass 
+        multicast.send_message(multicast.find_user(decoded_json["username"]), multicast.find_user(decoded_json["data"][0]), decoded_json["data"][1])
 
     elif request_type == "broadcast": #TODO message all users in the room. This can use the same code as the message request above 
         pass 

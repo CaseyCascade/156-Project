@@ -69,3 +69,12 @@ class Room:
     for student in breakout.students:
       self.add_user(student)
     self.breakout_rooms.remove(breakout)
+
+  def send_message(sender:UserProfile, recipient:UserProfile, message:str): #TODO
+    if recipient.has_socket():
+      try:
+          recipient.get_socket().send(f"Message from {sender.get_username()}: {message}".encode('utf-8'))
+      except Exception as e:
+              print(f"Error sending message to {recipient}: {e}")
+      else:
+          print(f"Client {recipient} not found.")

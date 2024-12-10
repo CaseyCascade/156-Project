@@ -1,4 +1,5 @@
 import socket
+import threading
 from user_profile import UserProfile
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -39,6 +40,19 @@ def compose_request():
             return request
         print("Request cannot be empty. Please try again.")
 
+def listen_to_server():
+    while True:
+        try:
+            # Receive and print messages from the server
+            from_server = client.recv(4096).decode()
+            if not from_server:
+                print("Server has closed the connection.")
+                break
+            print(f"\n[Server]: {from_server}")
+        except Exception as e:
+            print("Error while receiving data from server:", e)
+            break
+
 def run_client():
     register_user()
 
@@ -53,7 +67,11 @@ def run_client():
         from_server = client.recv(4096).decode()
         print("Server Response:", from_server)
 
-        # Enter a loop to send and receive requests
+        # Start a thread to listen to server messages
+        listen_thread = threading.Thread(target=listen_to_server, daemon=True)
+        listen_thread.start()
+
+        # Main loop for composing and sending requests
         while True:
             request = compose_request()
             if request.lower() == "exit":
@@ -63,8 +81,6 @@ def run_client():
             # Send the request to the server
             try:
                 client.send(user_profile.parse_raw_request(request).encode())
-                from_server = client.recv(4096).decode()
-                print("Server Response:", from_server)
             except Exception as e:
                 print("Error during communication:", e)
                 break

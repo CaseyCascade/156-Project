@@ -12,6 +12,9 @@ class UserProfile:
         self.is_instructor = decoded_json["is_instructor"] if self.is_instructor is None else self.is_instructor
         return 
     
+    def get_username(self):
+        return self.username
+    
     def get_is_instructor(self):
         return self.is_instructor
     
@@ -23,6 +26,9 @@ class UserProfile:
             return False
         else:
             return True 
+        
+    def get_socket(self):
+        return self.socket
         
     def add_breakout_request(self, request):
         print(request)
