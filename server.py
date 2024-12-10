@@ -76,7 +76,7 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
         conn.send(instructor.display_requests().encode('utf8'))
 
     elif request_type == "accept": # Accept a breakout room ARGS: index of request in list 
-        instructor = validate_instructor(multicast, decoded_json)
+        #instructor = validate_instructor(multicast, decoded_json)
         if not instructor:
             return
         flattened_string:str = ''.join(decoded_json.get("data"))
@@ -106,7 +106,7 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
             multicast_message += json.dumps(user.get_profile_json()) + "\n"
             breakout_message = ""
             for index, breakout in enumerate(multicast.breakout_rooms):
-                breakout_message += f"Breakout {index}:\n"
+                breakout_message += f"Breakout {index+1}:\n"
                 for user in breakout.get_all_users():
                     breakout_message += user.username + "\n"
         combined_message = waiting_message + multicast_message + breakout_message
