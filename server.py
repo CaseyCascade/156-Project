@@ -5,6 +5,18 @@ from user_profile import UserProfile
 from room import Room 
 from typing import List 
 
+def broadcast_to_room(room:Room, conn, username:str, is_instructor:bool, message:str):
+    for user in room.get_all_users():
+        if user.get_username() == username: # Don't send message to ourselves
+            continue 
+        new_json = {
+            "username": username,
+            "is_instructor": is_instructor,
+            "request": "message",
+            "data": [user.get_username(), message]
+        }
+        handle_client_request(conn, room, new_json)
+
 def validate_instructor(multicast:Room, decoded_json:dict):
     username = decoded_json.get("username")
     instructor = multicast.find_user(username)
@@ -63,7 +75,7 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
         conn.send(json.dumps(response).encode('utf8'))
         print("Multicast room created successfully.")
 
-    elif request_type == "message": #TODO send message to one specified user 
+    elif request_type == "message": 
         recipient_username = decoded_json["data"][0]
         message = decoded_json["data"][1]
         sender_room = multicast.get_room_of_user(username)
@@ -75,8 +87,17 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
             sender_room.send_message(username, recipient_username, message)
             
 
-    elif request_type == "broadcast": #TODO message all users in the room. This can use the same code as the message request above 
-        pass 
+    elif request_type == "broadcast": # Message all users in the current room 
+        sender_room = multicast.get_room_of_user(username)
+        message = decoded_json["data"][0]
+        all_rooms = multicast.breakout_rooms + [multicast]
+        
+        if instructor: # If sender is instructor, send message to all users in all rooms 
+            for room in all_rooms:
+                broadcast_to_room(room, conn, username, instructor, message)
+        else: # Otherwise, send message to all users in sender's room 
+            broadcast_to_room(sender_room, conn, username, is_instructor, message)
+
 
     elif request_type == "request": # Request a breakout room ARGS: username of each other student
         multicast.get_instructor().add_breakout_request(decoded_json)
