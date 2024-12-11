@@ -5,7 +5,7 @@ from user_profile import UserProfile
 from room import Room 
 from typing import List 
 
-def broadcast_to_room(room:Room, conn, username:str, is_instructor:bool, message:str):
+def broadcast_to_room(room:Room, conn, username:str, is_instructor:bool, message:str): # Takes a room as an argument and sends message to all users in that room 
     for user in room.get_all_users():
         if user.get_username() == username: # Don't send message to ourselves
             continue 
@@ -143,7 +143,7 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
           
         multicast_message = "\nMulticast Room:\n"
         for user in multicast.get_all_users():      
-            multicast_message += json.dumps(user.get_profile_json()) + "\n"
+            multicast_message += json.dumps(user.get_username()) + "\n"
             breakout_message = ""
             for index, breakout in enumerate(multicast.breakout_rooms):
                 breakout_message += f"Breakout {index+1}:\n"
