@@ -5,8 +5,8 @@ To get started on multiple machines, make sure to uncomment/comment the lines in
 - Students can message other users in the same room through the broadcast and message commands 
 - Students can request a breakout room via the commands below, and the request must be accepted by the instructor for it to be created 
 
-## Commands
-### Instructor Only
+# Commands
+## Instructor Only
 #### create_room
 Currently, this takes all students in the waiting list and puts them into the multicast. We likely should do this differently, but only if we have time 
 #### show_requests
@@ -15,7 +15,7 @@ Shows all requests made for breakout rooms and their indexes
 Creates a broadcast room at the index given at Index. The indexes correspond to those that display when using show_requests
 
 
-### Instructor & Student
+## Instructor & Student
 #### request|User1|User2...
 Sends a request to the instructor to create a breakout room with the following usernames given as arguments. 
 The resulting room will contain the instructor, the sender of the request, 
