@@ -151,7 +151,7 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
         
         help_command = decoded_json.get("data", [None])[0] if "data" in decoded_json and isinstance(decoded_json["data"], list) else None #THIS LINE was GPT'd #in help|message, this is message
         if not help_command: response = [True, f"Sent all commands."] #was 'help' passed as is? do nothing then.
-        elif(help_command == "create_room"): response = [True, f"create_room is an instructor command that lets the instructor create the multicast group. Run as is."]
+        elif(help_command == "create_room"): response = [True, f"\033[31mcreate_room\033[0m is an instructor command that lets the instructor create the multicast group. Run as is."]
         elif(help_command == "message"): response = [True, f"message is a command that lets any user send direct messages to a specific user.       Example: message|<recipient name>|Hello World"]
         elif(help_command == "broadcast"): response = [True, f"broadcast is a command that lets any user send a message that is viewable by everyone in the same room.       Example: broadcast|what the sigma?"]
         elif(help_command == "request"): response = [True, f"request is a student command that lets any student user request to be in a breakout room with any other user. Maximum of 8 users allowed.       Example: request|user1|user2|user3..."]
@@ -209,11 +209,11 @@ def run_server():
     ip_address = socket.gethostbyname(hostname)
 
     # Swap these two lines to do cross-machine instead of local host
-    serv.bind(('localhost', 8080)) 
-    #serv.bind((ip_address, 8080))
+    #serv.bind(('localhost', 8080)) 
+    serv.bind((ip_address, 8080))
 
     serv.listen(5)
-    print(f"Server started on IP: {ip_address}, listening on port 8080...")
+    print(f"Server started on IP: \033[33m{ip_address}!\033[0m, listening on port 8080...")
 
     while True:
         conn, addr = serv.accept()
