@@ -151,34 +151,27 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
                     breakout_message += user.username + "\n"
         combined_message = waiting_message + multicast_message + breakout_message
         conn.send(combined_message.encode('utf8'))
-    elif request_type == "help":
-        pass
+    elif request_type == "help": #SHOULD print the list of all possible commands
+        #help_command = ''.join(decoded_json.get("data")) #in help|message, this is message
+        
+        help_command = decoded_json.get("data", [None])[0] if "data" in decoded_json and isinstance(decoded_json["data"], list) else None #THIS LINE was GPT'd #in help|message, this is message
+        if not help_command: response = [True, f"Sent all commands."] #was 'help' passed as is? do nothing then.
+        elif(help_command == "create_room"): response = [True, f"create_room is an instructor command that lets the instructor create the multicast group. Run as is."]
+        elif(help_command == "message"): response = [True, f"message is a command that lets any user send direct messages to a specific user.       Example: message|<recipient name>|Hello World"]
+        elif(help_command == "broadcast"): response = [True, f"broadcast is a command that lets any user send a message that is viewable by everyone in the same room.       Example: broadcast|what the sigma?"]
+        elif(help_command == "request"): response = [True, f"request is a student command that lets any student user request to be in a breakout room with any other user. Maximum of 8 users allowed.       Example: request|user1|user2|user3..."]
+        elif(help_command == "show_requests"): response = [True, f"show_requests is an instructor command that shows the user all student breakout room requests. Run as is."]
+        elif(help_command == "accept"): response = [True, f"accept is an instructor command that allows a student breakout room to be granted, based on the show_requests index. See: help|show_requests.       Example: accept|1"]
+        elif(help_command == "close"): response = [True, f"close is a command that closes the current room the user is in. This automatically puts them back in the main group. Run as is."]
+        elif(help_command == "show"): response = [True, f"show is a command that shows all connected users in the server. Can see users in the waiting room, main room, and other breakout rooms. Run as is."]
+        else: response = [False, f"Command not recognized: {help_command}."]
+        conn.send(json.dumps(response).encode('utf8')) #because of JSON parsing, had to be a multiline
     else:
         # Handle unknown request types
         response = [False, "Unknown request type"]
         conn.send(json.dumps(response).encode('utf8'))
-        print(f"Unknown request type received: {request_type}")
-    '''    
-    elif request_type == "help": #SHOULD print the list of all possible commands
-        response = """All Command Types:
-            
-            1.create_room
-            
-            2.message
-            
-            3.broadcast
-            
-            4.request
-            
-            5.show_requests
-            
-            6.accept
-            
-            7.close
-            
-            8.show"""
-        conn.send(json.dumps(response).encode('utf8')) #because of JSON parsing, had to be a multiline
-    ''' #JSON parsing prevents this from working, switching to actual client code.
+        print(f"Unknown request type received: {request_type}")    
+    
     
 
 

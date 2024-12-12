@@ -82,8 +82,12 @@ def run_client():
             if request.lower() == "exit":
                 print("Exiting client...")
                 break
-            elif request.lower() == "help":
-                print("All Command Types:\n1.create_room\n2.message\n3.broadcast\n4.request\n5.show_requests\n6.accept\n7.close \n8.show")
+            elif request.lower() == "help": #plain param
+                #TODO: if i can check if current user is student, reduce the amount of commands shown?
+                request += "|" #NOTE: Not to brag, but this single line completely beats GPT's attempt to fix the initial problem of having an empty second parameter for help
+                if user_profile.get_is_instructor(): print("All Command Types:\n1.create_room\n2.message\n3.broadcast\n4.request\n5.show_requests\n6.accept\n7.close \n8.show")
+                else: print("All Command Types:\n1.message\n2.broadcast\n3.request\n4.close \n5.show")
+            
             # Send the request to the server
             try:
                 client.send(user_profile.parse_raw_request(request).encode())
