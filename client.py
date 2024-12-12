@@ -35,7 +35,7 @@ def register_user():
 
 def compose_request():
     while True:
-        request = input("[>] Enter request type (e.g., 'create_room', 'exit'): ").strip()
+        request = input("[>] Enter request type (e.g., 'create_room', 'help', 'exit'): ").strip()
         if request:
             return request
         print("Request cannot be empty. Please try again.")
@@ -82,7 +82,8 @@ def run_client():
             if request.lower() == "exit":
                 print("Exiting client...")
                 break
-
+            elif request.lower() == "help":
+                print("All Command Types:\n1.create_room\n2.message\n3.broadcast\n4.request\n5.show_requests\n6.accept\n7.close \n8.show")
             # Send the request to the server
             try:
                 client.send(user_profile.parse_raw_request(request).encode())

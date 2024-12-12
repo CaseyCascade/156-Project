@@ -151,12 +151,35 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
                     breakout_message += user.username + "\n"
         combined_message = waiting_message + multicast_message + breakout_message
         conn.send(combined_message.encode('utf8'))
-
+    elif request_type == "help":
+        pass
     else:
         # Handle unknown request types
         response = [False, "Unknown request type"]
         conn.send(json.dumps(response).encode('utf8'))
         print(f"Unknown request type received: {request_type}")
+    '''    
+    elif request_type == "help": #SHOULD print the list of all possible commands
+        response = """All Command Types:
+            
+            1.create_room
+            
+            2.message
+            
+            3.broadcast
+            
+            4.request
+            
+            5.show_requests
+            
+            6.accept
+            
+            7.close
+            
+            8.show"""
+        conn.send(json.dumps(response).encode('utf8')) #because of JSON parsing, had to be a multiline
+    ''' #JSON parsing prevents this from working, switching to actual client code.
+    
 
 
 def client_handler(conn, addr, multicast, temporary_students):
