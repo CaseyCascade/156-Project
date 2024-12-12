@@ -33,7 +33,7 @@ class Room:
     
   def find_user(self, name):
     for user in self.get_all_users():
-        if user and user.username == name:  # Check for None
+        if user and user.username == name: 
             return user
     return None
   
@@ -80,7 +80,6 @@ class Room:
         print("User not found in any Rooms")
 
   def send_message(self, sender_username, recipient_username, message):
-    # Normalize username
     recipient_username = recipient_username.strip().lower()
 
     # Look up recipient

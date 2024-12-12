@@ -20,21 +20,16 @@ def broadcast_to_room(room:Room, conn, username:str, is_instructor:bool, message
 def validate_instructor(multicast:Room, decoded_json:dict):
     username = decoded_json.get("username")
     instructor = multicast.find_user(username)
-
     if not instructor:
-        #response = [False, f"User '{username}' not found."]
         return False
-
     if not instructor.is_instructor:
-        #response = [False, f"User '{username}' is not an instructor."]
         return False
-    
     return instructor
 
 def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_students=None):
     request_type = decoded_json.get("request", "unknown")  # "request" specifies the type
     username = decoded_json.get("username")
-    is_instructor = decoded_json.get("is_instructor", False)  # Default to False if not provide
+    is_instructor = decoded_json.get("is_instructor", False)  # Default to False if not provided
 
     instructor = validate_instructor(multicast, decoded_json)
 
@@ -43,7 +38,7 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
         print("Missing 'username' field in request")
         return
 
-    if request_type == "add_user":
+    if request_type == "add_user": # Logic for this was first built by Chat GPT, and heavily modified as our needs changed 
         # Create a new user
         new_user = UserProfile()
         new_user.username = username
@@ -175,10 +170,11 @@ def handle_client_request(conn, multicast:Room, decoded_json:dict, temporary_stu
     
 
 
-def client_handler(conn, addr, multicast, temporary_students):
+def client_handler(conn, addr, multicast, temporary_students): # Handles a separate thread for each client and takes requests using handle_client_requests()
     print(f"Handling connection from {addr}")
     from_client = ''
     
+    # This try/catch block was built by Chat GPT as an easy way to get the structure needed to house our handle_client_request function 
     try:
         while True:
             data = conn.recv(4096)
@@ -186,7 +182,6 @@ def client_handler(conn, addr, multicast, temporary_students):
                 break  # Break if the client closes the connection
         
             from_client += data.decode('utf8')
-            # Deserialize the JSON data
             try:
                 decoded_json = json.loads(from_client)
                 from_client = ''  # Clear the buffer after processing the request
@@ -224,7 +219,7 @@ def run_server():
         conn, addr = serv.accept()
         print(f"Connection established with {addr}")
 
-        # Create a new thread for each client # Chat GPT helped with these lines 
+        # Create a new thread for each client # Chat GPT helped with showing how to do the threading 
         client_thread = threading.Thread( 
             target=client_handler,
             args=(conn, addr, multicast, temporary_students)
