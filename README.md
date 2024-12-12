@@ -29,7 +29,7 @@ Sends a message to every user in the same room (Instructor messages are sent to 
 #### add_user
 This shouldn't need to be implemented any further, 
 and is only used in our registration to get users into the waiting list or put the instructor in the multicast
-#### help, help|<command name>
+#### help, help|"Command name"
 This displays all available commands. If the user adds a command name to the second parameter, they will get a brief description of what the command can do, and how it should be run.
 
 # File Descriptions
